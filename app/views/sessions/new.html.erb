@@ -1,72 +1,12 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anmelden und Registrieren</title>
-</head>
-<body>
-
-    <h1>IRBGADCPP™</h1>
-
-    <% if flash[:notice] %>
-        <p style="color: green;"><%= flash[:notice] %></p>
-    <% end %>
-
-    <% if flash[:alert] %>
-        <p style="color: red;"><%= flash[:alert] %></p>
-    <% end %>
-
-    <!-- Anmeldeformular -->
-    <section>
-        <h2>Anmelden</h2>
-        <%= form_tag login_path do %>
-            <div>
-                <%= label_tag :email, "E-Mail:" %>
-                <%= email_field_tag :email %>
-            </div>
-            <div>
-                <%= label_tag :password, "Passwort:" %>
-                <%= password_field_tag :password %>
-            </div>
-            <%= submit_tag "Anmelden" %>
-        <% end %>
-    </section>
-
-    <!-- Registrierungsformular -->
-    <section>
-        <h2>Registrieren</h2>
-        <%= form_for @user, url: users_path do |f| %>
-            <% if @user.errors.any? %>
-                <div id="error_explanation">
-                    <h2><%= pluralize(@user.errors.count, "Fehler") %> gefunden:</h2>
-                    <ul>
-                        <% @user.errors.full_messages.each do |msg| %>
-                            <li><%= msg %></li>
-                        <% end %>
-                    </ul>
-                </div>
-            <% end %>
-
-            <div>
-                <%= f.label :username, "Benutzername:" %>
-                <%= f.text_field :username %>
-            </div>
-            <div>
-                <%= f.label :email, "E-Mail:" %>
-                <%= f.email_field :email %>
-            </div>
-            <div>
-                <%= f.label :password, "Passwort:" %>
-                <%= f.password_field :password %>
-            </div>
-            <div>
-                <%= f.label :password_confirmation, "Passwort bestätigen:" %>
-                <%= f.password_field :password_confirmation %>
-            </div>
-            <%= f.submit "Registrieren" %>
-        <% end %>
-    </section>
-
-</body>
-</html>
+<h2>Anmelden</h2>
+<%= form_tag login_path do %>
+  <div>
+    <%= label_tag :email, "E-Mail:" %>
+    <%= email_field_tag :email %>
+  </div>
+  <div>
+    <%= label_tag :password, "Passwort:" %>
+    <%= password_field_tag :password %>
+  </div>
+  <%= submit_tag "Anmelden" %>
+<% end %>

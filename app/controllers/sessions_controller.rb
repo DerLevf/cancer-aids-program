@@ -1,26 +1,28 @@
 class SessionsController < ApplicationController
+  helper_method :current_user
+
   def new
-    # Initialisiert die @user-Variable, damit das Registrierungsformular in der gleichen View rendert
-    @user = User.new
   end
 
   def create
-    # Sucht den Benutzer anhand der E-Mail-Adresse und authentifiziert das Passwort
     user = User.find_by(email: params[:email])
     if user && user.authenticate(params[:password])
-      # Anmeldedaten sind korrekt, Session starten
       session[:user_id] = user.id
-      redirect_to root_path, notice: "Anmeldung erfolgreich!"
+      redirect_to debt_projects_index_path, notice: "Anmeldung erfolgreich!"
     else
-      # Anmeldedaten sind falsch, Fehlermeldung anzeigen
-      flash.now[:alert] = "Ungültige E-Mail oder Passwort."
-      render :new, status: :unauthorized
+      flash.now[:alert] = "Ungültige E-Mail oder Passwort"
+      render :new, status: :unprocessable_entity
     end
   end
 
   def destroy
-    # Beendet die Session des Benutzers
     session[:user_id] = nil
-    redirect_to root_path, notice: "Abmeldung erfolgreich!"
+    redirect_to root_path, notice: "Erfolgreich abgemeldet!"
+  end
+
+  private
+
+  def current_user
+    @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
   end
 end

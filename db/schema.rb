@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_25_073103) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_25_082529) do
   create_table "debt_projects", force: :cascade do |t|
     t.string "name"
     t.decimal "total_amount"
@@ -24,7 +24,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_25_073103) do
 
   create_table "group_memberships", force: :cascade do |t|
     t.integer "user_id", null: false
-    t.integer "debt_project_id", null: false
+    t.integer "debt_project_id"
     t.integer "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -49,7 +49,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_25_073103) do
     t.string "email"
     t.string "username"
     t.string "password_digest"
-    t.string "role"
     t.decimal "budget"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
