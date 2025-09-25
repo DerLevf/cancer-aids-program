@@ -1,33 +1,60 @@
 <h1>Deine Schuldengruppen</h1>
 
-<%= link_to "+ Neue Gruppe", new_debt_project_path, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4" %>
+<%= link_to "+ Neue Gruppe", new_debt_project_path, class: "btn btn-primary mb-4" %>
 
 <% if @debt_projects.any? %>
-  <ul>
-    <% @debt_projects.each do |project| %>
-      <li class="bg-gray-100 p-4 mb-4 rounded-lg shadow-md">
-        <strong><%= project.name %></strong>
-        <p>Betrag: <%= number_to_currency(project.total_amount || 0, unit: "CHF") %></p>
-        <p>Frist: <%= project.deadline.strftime("%d.%m.%Y") if project.deadline %></p>
-        <p>Erstellt von: <%= project.creator.username if project.creator %></p>
-        <p>
-          Mitglieder:
-          <% project.group_memberships.includes(:user).each do |membership| %>
-            <% next unless membership.user %>
-            <%= membership.user.username %> (<%= membership.role %>)
-          <% end %>
-        </p>
-
-        <% if policy(project).edit? %>
-          <%= link_to "Bearbeiten", edit_debt_project_path(project), class: "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded mt-2 inline-block" %>
+  <div class="table-container">
+    <table class="debt-projects-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Betrag</th>
+          <th>Frist</th>
+          <th>Erstellt von</th>
+          <th>Mitglieder</th>
+          <th>Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @debt_projects.each do |project| %>
+          <tr class="clickable-row" data-href="<%= debt_project_path(project) %>">
+            <td><%= project.name %></td>
+            <td><%= number_to_currency(project.total_amount || 0, unit: "CHF") %></td>
+            <td><%= project.deadline&.strftime("%d.%m.%Y") || "-" %></td>
+            <td><%= project.creator&.username || "Unbekannt" %></td>
+            <td>
+              <% project.group_memberships.includes(:user).each do |membership| %>
+                <% next unless membership.user %>
+                <span class="member <%= membership.role %>">
+                  <%= membership.user.username %>
+                </span>
+              <% end %>
+            </td>
+            <td>
+              <% if policy(project).edit? %>
+                <%= link_to "Bearbeiten", edit_debt_project_path(project), class: "btn btn-warning" %>
+              <% end %>
+              <% if policy(project).destroy? %>
+                <%= button_to "Löschen", debt_project_path(project), method: :delete,
+                      data: { confirm: "Willst du diese Gruppe wirklich löschen?" },
+                      class: "btn btn-danger" %>
+              <% end %>
+            </td>
+          </tr>
         <% end %>
-
-        <% if policy(project).destroy? %>
-          <%= button_to "Löschen", debt_project_path(project), method: :delete, data: { confirm: "Willst du diese Gruppe wirklich löschen?" }, class: "bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded mt-2 inline-block" %>
-        <% end %>
-      </li>
-    <% end %>
-  </ul>
+      </tbody>
+    </table>
+  </div>
 <% else %>
   <p>Du bist noch in keiner Schuldengruppe.</p>
 <% end %>
+
+<script>
+  document.addEventListener("turbo:load", () => {
+    document.querySelectorAll(".clickable-row").forEach(row => {
+      row.addEventListener("click", () => {
+        window.location = row.dataset.href;
+      });
+    });
+  });
+</script>
