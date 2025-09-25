@@ -10,5 +10,5 @@ Rails.application.routes.draw do
   delete "/logout", to: "sessions#destroy"
 
   # Deine anderen Routen
-  get "/debt_projects/index", to: "debt_projects#index", as: :debt_projects_index
+  resources :debt_projects
 end

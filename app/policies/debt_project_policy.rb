@@ -11,9 +11,9 @@ class DebtProjectPolicy
     user.present?
   end
 
-  # Nur Debtcollector darf neue Projekte erstellen
+  # Jeder angemeldete User darf neue Projekte erstellen
   def new?
-    user.group_memberships.exists?(role: :debt_collector)
+    user.present?
   end
 
   def create?

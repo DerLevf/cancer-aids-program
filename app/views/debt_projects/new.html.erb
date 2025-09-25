@@ -1,0 +1,36 @@
+<h2>Neue Schuldengruppe erstellen</h2>
+
+<%= form_for @debt_project do |f| %>
+  <div>
+    <%= f.label :name, "Name der Gruppe:" %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div>
+    <%= f.label :total_amount, "Gesamtbetrag:" %>
+    <%= f.number_field :total_amount, step: 0.01 %>
+  </div>
+
+  <div>
+    <%= f.label :deadline, "Frist:" %>
+    <%= f.date_field :deadline %>
+  </div>
+
+  <h3>Mitglieder hinzufügen</h3>
+
+  <!-- Eigener Benutzer (Debtcollector) -->
+  <div>
+    <%= check_box_tag "debt_project[user_ids][]", current_user.id, true, disabled: true %>
+    <%= current_user.username %> (Debtcollector)
+  </div>
+
+  <!-- Andere Benutzer als Schuldner -->
+  <% @other_users.each do |user| %>
+    <div>
+      <%= check_box_tag "debt_project[user_ids][]", user.id %>
+      <%= user.username %> (Schuldner)
+    </div>
+  <% end %>
+
+  <%= f.submit "Gruppe erstellen", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2" %>
+<% end %>

@@ -1,38 +1,29 @@
-<div class="container mx-auto p-4">
-  <h1 class="text-3xl font-bold mb-6">Deine Schuldengruppen</h1>
+<h1>Deine Schuldengruppen</h1>
 
-  <!-- Abmelde-Button -->
-  <% if current_user %>
-    <%= button_to "Abmelden", logout_path, method: :delete, class: "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-4" %>
-  <% end %>
+<!-- Logout-Button für angemeldete User -->
+<% if current_user %>
+  <%= button_to "Abmelden", logout_path, method: :delete, class: "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-4" %>
+<% end %>
 
-  <% if policy(DebtProject).new? %>
-    <%= link_to "Neue Gruppe erstellen", new_debt_project_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4" %>
-  <% end %>
+<%= link_to "+ Neue Gruppe", new_debt_project_path, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4" %>
 
-  <div class="mt-6">
-    <% if @debt_projects.any? %>
-      <ul>
-        <% @debt_projects.each do |project| %>
-          <li class="bg-gray-100 p-4 mb-4 rounded-lg shadow-md">
-            <h2 class="text-xl font-semibold"><%= project.name %></h2>
-            <p>Betrag: <%= number_to_currency(project.total_amount || 0, unit: "CHF") %></p>
-            <% if project.deadline %>
-              <p>Frist: <%= project.deadline.strftime("%d.%m.%Y") %></p>
-            <% end %>
-            <p>Erstellt von: <%= project.creator.username if project.creator %></p>
-
-            <p class="text-sm text-gray-500 mt-2">
-              Mitglieder:
-              <% project.group_memberships.includes(:user).each do |membership| %>
-                <%= membership.user.username %> (<%= membership.role %>)
-              <% end %>
-            </p>
-          </li>
-        <% end %>
-      </ul>
-    <% else %>
-      <p class="text-gray-600">Du bist noch in keiner Schuldengruppe.</p>
+<% if @debt_projects.any? %>
+  <ul>
+    <% @debt_projects.each do |project| %>
+      <li class="bg-gray-100 p-4 mb-4 rounded-lg shadow-md">
+        <strong><%= project.name %></strong>
+        <p>Betrag: <%= number_to_currency(project.total_amount || 0, unit: "CHF") %></p>
+        <p>Frist: <%= project.deadline.strftime("%d.%m.%Y") if project.deadline %></p>
+        <p>Erstellt von: <%= project.creator.username if project.creator %></p>
+        <p>
+          Mitglieder:
+          <% project.group_memberships.includes(:user).each do |membership| %>
+            <%= membership.user.username %> (<%= membership.role %>)
+          <% end %>
+        </p>
+      </li>
     <% end %>
-  </div>
-</div>
+  </ul>
+<% else %>
+  <p>Du bist noch in keiner Schuldengruppe.</p>
+<% end %>

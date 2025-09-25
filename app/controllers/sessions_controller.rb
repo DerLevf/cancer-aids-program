@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
     user = User.find_by(email: params[:email])
     if user && user.authenticate(params[:password])
       session[:user_id] = user.id
-      redirect_to debt_projects_index_path, notice: "Anmeldung erfolgreich!"
+      redirect_to debt_projects_path, notice: "Anmeldung erfolgreich!"
     else
       flash.now[:alert] = "Ungültige E-Mail oder Passwort"
       render :new, status: :unprocessable_entity
