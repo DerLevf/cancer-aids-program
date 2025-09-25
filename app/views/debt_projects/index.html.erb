@@ -1,6 +1,5 @@
 <h1>Deine Schuldengruppen</h1>
 
-<!-- Logout-Button für angemeldete User -->
 <% if current_user %>
   <%= button_to "Abmelden", logout_path, method: :delete, class: "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-4" %>
 <% end %>
@@ -18,9 +17,18 @@
         <p>
           Mitglieder:
           <% project.group_memberships.includes(:user).each do |membership| %>
+            <% next unless membership.user %>
             <%= membership.user.username %> (<%= membership.role %>)
           <% end %>
         </p>
+
+        <% if policy(project).edit? %>
+          <%= link_to "Bearbeiten", edit_debt_project_path(project), class: "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded mt-2 inline-block" %>
+        <% end %>
+
+        <% if policy(project).destroy? %>
+          <%= button_to "Löschen", debt_project_path(project), method: :delete, data: { confirm: "Willst du diese Gruppe wirklich löschen?" }, class: "bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded mt-2 inline-block" %>
+        <% end %>
       </li>
     <% end %>
   </ul>

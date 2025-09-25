@@ -6,17 +6,33 @@ class DebtProjectPolicy
     @record = record
   end
 
-  # Jeder angemeldete User darf die Index-Seite sehen
   def index?
     user.present?
   end
 
-  # Jeder angemeldete User darf neue Projekte erstellen
   def new?
     user.present?
   end
 
   def create?
     new?
+  end
+
+  def edit?
+    user_is_creator?
+  end
+
+  def update?
+    edit?
+  end
+
+  def destroy?
+    user_is_creator?
+  end
+
+  private
+
+  def user_is_creator?
+    record.creator_id == user.id
   end
 end
