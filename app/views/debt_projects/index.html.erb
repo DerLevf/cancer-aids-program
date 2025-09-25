@@ -1,9 +1,5 @@
 <h1>Deine Schuldengruppen</h1>
 
-<% if current_user %>
-  <%= button_to "Abmelden", logout_path, method: :delete, class: "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-4" %>
-<% end %>
-
 <%= link_to "+ Neue Gruppe", new_debt_project_path, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4" %>
 
 <% if @debt_projects.any? %>

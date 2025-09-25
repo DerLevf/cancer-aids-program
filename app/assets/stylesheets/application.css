@@ -1,10 +1,119 @@
-/*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background-color: #f7f9fb;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 30px; 
+}
+
+h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0e0e0;
+    color: #4a75aa;
+}
+
+h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    color: #555;
+}
+
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #444;
+    font-size: 0.9rem;
+}
+
+/* KORRIGIERTER SELEKTOR: Schließt Checkboxen und Hidden-Felder aus! */
+input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+textarea,
+select {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #4a75aa;
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(74, 117, 170, 0.25);
+}
+
+.btn,
+input[type="submit"],
+.button_to input[type="submit"] {
+    display: inline-block;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.btn-primary,
+.bg-blue-500,
+input[type="submit"] {
+    background-color: #4a75aa !important;
+    color: white !important;
+}
+
+.btn-primary:hover,
+.bg-blue-500:hover,
+input[type="submit"]:hover {
+    background-color: #3b5a82 !important;
+}
+
+.card,
+.list-item {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.flash {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    font-weight: 500;
+}
+
+.flash.notice {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.flash.alert {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}

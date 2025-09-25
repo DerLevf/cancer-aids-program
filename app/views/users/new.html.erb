@@ -27,9 +27,6 @@
     <%= f.label :password_confirmation, "Passwort bestätigen:" %>
     <%= f.password_field :password_confirmation %>
   </div>
-  <div>
-    <%= label_tag :role, "Rolle:" %>
-    <%= select_tag :role, options_for_select([['Schuldner', 'schuldner'], ['Debtcollector', 'debt_collector']]) %>
-  </div>
+
   <%= f.submit "Registrieren" %>
 <% end %>

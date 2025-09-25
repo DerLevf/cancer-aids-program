@@ -2,29 +2,31 @@
 
 <%= form_for @debt_project do |f| %>
   <div>
+    <%# HINZUFÜGEN von required: true %>
     <%= f.label :name, "Name der Gruppe:" %>
-    <%= f.text_field :name %>
+    <%= f.text_field :name, required: true %>
   </div>
 
   <div>
+    <%# HINZUFÜGEN von required: true %>
     <%= f.label :total_amount, "Gesamtbetrag:" %>
-    <%= f.number_field :total_amount, step: 0.01 %>
+    <%= f.number_field :total_amount, step: 0.01, required: true %>
   </div>
 
   <div>
+    <%# HINZUFÜGEN von required: true %>
     <%= f.label :deadline, "Frist:" %>
-    <%= f.date_field :deadline %>
+    <%= f.date_field :deadline, required: true %>
   </div>
 
   <h3>Mitglieder hinzufügen</h3>
 
-  <!-- Eigener Benutzer (Debtcollector) -->
   <div>
     <%= check_box_tag "debt_project[user_ids][]", current_user.id, true, disabled: true %>
     <%= current_user.username %> (Debtcollector)
   </div>
 
-  <!-- Andere Benutzer als Schuldner -->
+  <%# 🚨 Hinweis: Die Validierung von Checkboxen/Mitgliedern muss im Controller/Modell erfolgen %>
   <%= hidden_field_tag "debt_project[schuldner_ids][]" %>
 
   <% @other_users.each do |user| %>

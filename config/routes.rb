@@ -1,14 +1,13 @@
 Rails.application.routes.draw do
   root "sessions#new"
 
-  # Registrierung
-  resources :users, only: [ :new, :create ]
+  resources :users, only: [ :new, :create, :show, :edit, :update ]
 
-  # Session (Login/Logout)
   get    "/login",  to: "sessions#new"
   post   "/login",  to: "sessions#create"
   delete "/logout", to: "sessions#destroy"
 
-  # Deine anderen Routen
-  resources :debt_projects
+  resources :debt_projects do
+    resources :tasks
+  end
 end

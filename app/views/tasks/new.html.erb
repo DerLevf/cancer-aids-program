@@ -1,0 +1,27 @@
+<h2>Neue Aufgabe erstellen</h2>
+
+<%= form_for [@debt_project, @task] do |f| %>
+  <div>
+    <%= f.label :title, "Titel:" %>
+    <%= f.text_field :title %>
+  </div>
+
+  <div>
+    <%= f.label :description, "Beschreibung:" %>
+    <%= f.text_area :description %>
+  </div>
+
+  <div>
+    <%= f.label :assigned_to_id, "Zugewiesen an:" %>
+    <%= f.collection_select :assigned_to_id, @debt_project.users, :id, :username, prompt: "Wähle einen Benutzer" %>
+  </div>
+
+  <div>
+    <%= f.label :status, "Status:" %>
+    <%= f.select :status, Task.statuses.keys.map { |s| [s.humanize, s] } %>
+  </div>
+
+  <%= f.submit "Aufgabe erstellen", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2" %>
+<% end %>
+
+<%= link_to "Zurück", debt_project_path(@debt_project), class: "text-blue-500 mt-4 inline-block" %>

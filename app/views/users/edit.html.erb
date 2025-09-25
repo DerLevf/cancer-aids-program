@@ -1,0 +1,32 @@
+<h2>Benutzer bearbeiten</h2>
+
+<%= form_for @user do |f| %>
+  <div>
+    <%= f.label :username, "Benutzername:" %>
+    <%= f.text_field :username, required: true %>
+  </div>
+
+  <div>
+    <%= f.label :email, "E-Mail:" %>
+    <%= f.email_field :email, required: true %>
+  </div>
+
+  <div>
+    <%= f.label :budget, "Budget:" %>
+    <%= f.number_field :budget, step: 0.01 %>
+  </div>
+
+  <div>
+    <%= f.label :password, "Neues Passwort (leer lassen, um nicht zu ändern):" %>
+    <%= f.password_field :password, autocomplete: "new-password" %>
+  </div>
+
+  <div>
+    <%= f.label :password_confirmation, "Passwort bestätigen:" %>
+    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+  </div>
+
+  <%= f.submit "Speichern", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2" %>
+<% end %>
+
+<%= link_to "Zurück", debt_projects_path, class: "text-blue-500 mt-4 inline-block" %>

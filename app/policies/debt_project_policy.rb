@@ -26,6 +26,12 @@ class DebtProjectPolicy
     edit?
   end
 
+
+  def show?
+    # Benutzer darf das Projekt sehen, wenn er Mitglied ist
+    record.users.include?(user)
+  end
+
   def destroy?
     user_is_creator?
   end

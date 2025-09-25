@@ -10,6 +10,8 @@ class DebtProjectsController < ApplicationController
                       .order(:created_at)
   end
 
+
+
   def new
     authorize DebtProject
     @debt_project = DebtProject.new
@@ -55,6 +57,11 @@ class DebtProjectsController < ApplicationController
     authorize @debt_project
     @debt_project.destroy
     redirect_to debt_projects_path, notice: "Schuldengruppe erfolgreich gelöscht!"
+  end
+
+  def show
+    @debt_project = DebtProject.find(params[:id])
+    authorize @debt_project
   end
 
   private

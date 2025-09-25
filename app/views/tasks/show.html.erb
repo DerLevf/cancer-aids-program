@@ -1,0 +1,7 @@
+<h2><%= @task.title %></h2>
+<p><strong>Beschreibung:</strong> <%= @task.description %></p>
+<p><strong>Zugewiesen an:</strong> <%= @task.assigned_to.username %></p>
+<p><strong>Status:</strong> <%= @task.status.humanize %></p>
+
+<%= link_to "Bearbeiten", edit_debt_project_task_path(@debt_project, @task), class: "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded mt-2" if policy(@task).update? %>
+<%= link_to "Zurück zur Gruppe", debt_project_path(@debt_project), class: "text-blue-500 mt-4 inline-block" %>
