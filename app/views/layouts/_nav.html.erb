@@ -6,6 +6,7 @@
 
     <div class="navbar-links">
       <% if current_user %>
+        <%= link_to "Aktivitätsprotokolle", activity_logs_path, class: "btn btn-primary" %>
         <%= link_to "Mein Profil", user_path(current_user), class: "btn btn-primary" %>
 
         <div class="btn-wrapper">

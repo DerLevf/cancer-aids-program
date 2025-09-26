@@ -1,7 +1,36 @@
-<h2><%= @task.title %></h2>
-<p><strong>Beschreibung:</strong> <%= @task.description %></p>
-<p><strong>Zugewiesen an:</strong> <%= @task.assigned_to.username %></p>
-<p><strong>Status:</strong> <%= @task.status.humanize %></p>
+<div class="task-details">
+  <div class="header-section">
+    <h2><%= @task.title %></h2>
+    <div class="action-buttons">
+      <% if policy(@task).update? %>
+        <%= link_to "Bearbeiten", edit_debt_project_task_path(@debt_project, @task), class: "btn btn-warning" %>
+      <% end %>
 
-<%= link_to "Bearbeiten", edit_debt_project_task_path(@debt_project, @task), class: "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded mt-2" if policy(@task).update? %>
-<%= link_to "Zurück zur Gruppe", debt_project_path(@debt_project), class: "text-blue-500 mt-4 inline-block" %>
+      <% if policy(@task).destroy? %>
+        <%= button_to "Löschen", debt_project_task_path(@debt_project, @task), method: :delete, 
+              data: { turbo_confirm: "Willst du diese Aufgabe wirklich löschen?" }, 
+              class: "btn btn-danger" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="details-section card">
+    <p><strong>Beschreibung:</strong> <%= @task.description %></p>
+    <p>
+      <strong>Zugewiesen an:</strong> 
+      <% if @task.assigned_user %>
+        <span class="member-tag debtor"><%= @task.assigned_user.username %></span>
+      <% else %>
+        Nicht zugewiesen
+      <% end %>
+    </p>
+    <p><strong>Status:</strong> <span class="member-tag status-<%= @task.status %>"><%= @task.status.humanize %></span></p>
+    
+    <% if @task.deadline %>
+      <p><strong>Frist:</strong> <%= @task.deadline.strftime("%d.%m.%Y") %></p>
+    <% end %>
+    <p><strong>Erstellt am:</strong> <%= @task.created_at.strftime("%d.%m.%Y") %></p>
+  </div>
+</div>
+
+<%= link_to "Zurück zur Schuldengruppe", debt_project_path(@debt_project), class: "back-link" %>

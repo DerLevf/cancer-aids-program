@@ -10,7 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_25_132515) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_25_191410) do
+  create_table "activity_logs", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "debt_project_id"
+    t.string "action"
+    t.text "details"
+    t.string "trackable_type"
+    t.integer "trackable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["debt_project_id"], name: "index_activity_logs_on_debt_project_id"
+    t.index ["trackable_type", "trackable_id"], name: "index_activity_logs_on_trackable"
+    t.index ["user_id"], name: "index_activity_logs_on_user_id"
+  end
+
   create_table "debt_projects", force: :cascade do |t|
     t.string "name"
     t.decimal "total_amount"
@@ -54,6 +68,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_25_132515) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "activity_logs", "debt_projects"
+  add_foreign_key "activity_logs", "users"
   add_foreign_key "debt_projects", "users", column: "creator_id"
   add_foreign_key "group_memberships", "debt_projects"
   add_foreign_key "group_memberships", "users"

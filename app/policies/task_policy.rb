@@ -12,6 +12,10 @@ class TaskPolicy < ApplicationPolicy
     user_is_schuldner?
   end
 
+  def show?
+    user_is_schuldner?
+  end
+
   private
 
   def user_is_schuldner?

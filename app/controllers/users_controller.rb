@@ -9,16 +9,12 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
+      ActivityLog.create(
+        user: @user,
+        action: "registered_user",
+        details: { email: @user.email }
+      )
 
-
-      # role = params[:role] # schuldner oder debt_collector
-
-      # default_project = DebtProject.first
-      # GroupMembership.create!(
-      #  user: @user,
-      #  role: role,
-      #  debt_project: default_project
-      # ) if default_project
 
       session[:user_id] = @user.id
       redirect_to debt_projects_path, notice: "Registrierung erfolgreich!"

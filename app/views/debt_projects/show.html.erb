@@ -1,50 +1,67 @@
-<h1><%= @debt_project.name %></h1>
+<div class="project-details-container">
+  
+  <h1><%= @debt_project.name %></h1>
 
-<p><strong>Gesamtbetrag:</strong> <%= number_to_currency(@debt_project.total_amount || 0, unit: "CHF") %></p>
-<p><strong>Frist:</strong> <%= @debt_project.deadline.strftime("%d.%m.%Y") if @debt_project.deadline %></p>
-<p><strong>Erstellt von:</strong> <%= @debt_project.creator.username if @debt_project.creator %></p>
+  <div class="card project-summary">
+    <p><strong>Gesamtbetrag:</strong> <%= number_to_currency(@debt_project.total_amount || 0, unit: "CHF") %></p>
+    <p><strong>Frist:</strong> <%= @debt_project.deadline&.strftime("%d.%m.%Y") || "Keine Frist" %></p>
+    <p><strong>Erstellt von:</strong> <%= @debt_project.creator&.username || "Unbekannt" %></p>
+  </div>
 
-<h2>Mitglieder</h2>
-<ul>
-  <% @debt_project.group_memberships.includes(:user).each do |membership| %>
-    <% next unless membership.user %>
-    <li><%= membership.user.username %> (<%= membership.role %>)</li>
-  <% end %>
-</ul>
-
-<%# Bearbeiten & Löschen nur für DebtCollector %>
-<% if policy(@debt_project).edit? %>
-  <%= link_to "Bearbeiten", edit_debt_project_path(@debt_project), class: "bg-yellow-500 hover:bg-yellow-700 text-white px-3 py-1 rounded" %>
-<% end %>
-
-<% if policy(@debt_project).destroy? %>
-  <%= button_to "Löschen", debt_project_path(@debt_project), method: :delete, data: { confirm: "Willst du diese Gruppe wirklich löschen?" }, class: "bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded" %>
-<% end %>
-
-<hr>
-
-<h2>Aufgaben</h2>
-<% @debt_project.tasks.each do |task| %>
-  <div class="bg-gray-100 p-3 mb-2 rounded">
-    <p><strong>Titel:</strong> <%= task.title %></p>
-    <p><strong>Beschreibung:</strong> <%= task.description %></p>
-    <p><strong>Zugewiesen an:</strong> <%= task.assigned_user.username if task.assigned_user %></p>
-    <p><strong>Status:</strong> <%= task.status.humanize %></p>
-
-    <%# Bearbeiten & Löschen nur für Schuldner %>
-    <% if policy(task).update? %>
-      <%= link_to "Bearbeiten", edit_debt_project_task_path(@debt_project, task), class: "bg-yellow-500 hover:bg-yellow-700 text-white px-2 py-1 rounded" %>
+  <div class="action-buttons-group">
+    <%# Bearbeiten & Löschen nur für DebtCollector %>
+    <% if policy(@debt_project).edit? %>
+      <%= link_to "Bearbeiten", edit_debt_project_path(@debt_project), class: "btn btn-warning" %>
     <% end %>
 
-    <% if policy(task).destroy? %>
-      <%= button_to "Löschen", debt_project_task_path(@debt_project, task), method: :delete, data: { confirm: "Willst du diese Aufgabe wirklich löschen?" }, class: "bg-red-500 hover:bg-red-700 text-white px-2 py-1 rounded" %>
+    <% if policy(@debt_project).destroy? %>
+      <%= button_to "Löschen", debt_project_path(@debt_project), method: :delete, data: { turbo_confirm: "Willst du diese Gruppe wirklich löschen?" }, class: "btn btn-danger" %>
     <% end %>
   </div>
-<% end %>
 
-<%# Neue Aufgabe nur für Schuldner %>
-<% if policy(Task.new(debt_project: @debt_project)).create? %>
-  <%= link_to "Neue Aufgabe", new_debt_project_task_path(@debt_project), class: "bg-green-500 text-white px-3 py-1 rounded" %>
-<% end %>
+  <h2>Mitglieder</h2>
+  <ul class="member-list card">
+    <% @debt_project.group_memberships.includes(:user).each do |membership| %>
+      <% next unless membership.user %>
+      <%# Use the CSS classes defined for membership roles %>
+      <li class="member <%= membership.role.to_s.underscore %>">
+        <%= membership.user.username %> (<%= membership.role.humanize %>)
+      </li>
+    <% end %>
+  </ul>
+  
+  <hr class="separator">
 
-<%= link_to "Zurück zur Übersicht", debt_projects_path, class: "text-blue-500 mt-4 inline-block" %>
+  <h2>Aufgaben</h2>
+  <div class="tasks-list">
+    <% @debt_project.tasks.each do |task| %>
+      <div class="card task-item">
+        <p><strong>Titel:</strong> <%= task.title %></p>
+        <p><strong>Beschreibung:</strong> <%= task.description %></p>
+        <p><strong>Zugewiesen an:</strong> <%= task.assigned_user&.username || "Nicht zugewiesen" %></p>
+        <p>
+          <strong>Status:</strong> 
+          <span class="member status-tag status-<%= task.status %>"><%= task.status.humanize %></span>
+        </p>
+
+        <div class="task-actions">
+          <%# Bearbeiten & Löschen nur für Berechtigte %>
+          <% if policy(task).update? %>
+            <%= link_to "Bearbeiten", edit_debt_project_task_path(@debt_project, task), class: "btn btn-warning btn-small" %>
+          <% end %>
+
+          <% if policy(task).destroy? %>
+            <%= button_to "Löschen", debt_project_task_path(@debt_project, task), method: :delete, data: { turbo_confirm: "Willst du diese Aufgabe wirklich löschen?" }, class: "btn btn-danger btn-small" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Neue Aufgabe nur für Berechtigte %>
+  <% if policy(Task.new(debt_project: @debt_project)).create? %>
+    <%= link_to "Neue Aufgabe", new_debt_project_task_path(@debt_project), class: "btn btn-primary new-task-button" %>
+  <% end %>
+
+  <%= link_to "Zurück zur Übersicht", debt_projects_path, class: "back-link" %>
+</div>

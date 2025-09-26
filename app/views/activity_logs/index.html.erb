@@ -1,0 +1,35 @@
+<h1>Aktivitätsprotokolle</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Datum</th>
+      <th>Benutzer</th>
+      <th>Aktion</th>
+      <th>Zusammenhang</th>
+      <th>Details</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @activity_logs.each do |log| %>
+      <tr>
+        <td><%= l(log.created_at, format: :short) %></td>
+        <td><%= log.user.username %></td>
+        <td><%= log.action %></td>
+        <td>
+          <% if log.trackable.is_a?(Task) %>
+            Aufgabe: <%= link_to log.trackable.title, debt_project_task_path(log.debt_project, log.trackable) %>
+          <% elsif log.trackable.is_a?(User) %>
+            Benutzer: <%= log.trackable.username %>
+          <% else %>
+            Keine
+          <% end %>
+        </td>
+        <td>
+          <pre><%= log.details.present? ? JSON.pretty_generate(log.details) : "Keine Details" %></pre>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

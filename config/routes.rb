@@ -10,4 +10,6 @@ Rails.application.routes.draw do
   resources :debt_projects do
     resources :tasks
   end
+
+  resources :activity_logs, only: [:index, :show]
 end

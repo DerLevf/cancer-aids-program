@@ -1,7 +1,17 @@
 class TasksController < ApplicationController
   before_action :authenticate_user!
   before_action :set_debt_project
-  before_action :set_task, only: [ :edit, :update, :destroy ]
+  before_action :set_task, only: [ :show, :edit, :update, :destroy ] # Added :show
+
+  after_action :log_task_creation, only: [:create]
+  after_action :log_task_update, only: [:update]
+  after_action :log_task_deletion, only: [:destroy]
+
+  def show
+    # @task is set by the before_action :set_task
+    authorize @task
+    # Renders app/views/tasks/show.html.erb
+  end
 
   def new
     @task = @debt_project.tasks.build
@@ -44,11 +54,47 @@ class TasksController < ApplicationController
   end
 
   def set_task
-    @task = @debt_project.tasks.find(params[:id])
+    # FIX: Use find_by to prevent NoMethodError if the task doesn't exist
+    @task = @debt_project.tasks.find_by(id: params[:id]) 
+    
+    unless @task
+      redirect_to debt_project_path(@debt_project), alert: "Die angeforderte Aufgabe wurde nicht gefunden."
+    end
   end
 
 def task_params
   params.require(:task).permit(:title, :description, :status, :deadline,
                                 :assigned_to_id)
 end
+  def log_task_creation
+    ActivityLog.create!(
+      user: current_user,
+      debt_project: @debt_project,
+      trackable: @task,
+      action: "created_task",
+      details: @task.attributes
+    )
+  end
+
+  def log_task_update
+    ActivityLog.create!(
+      user: current_user,
+      debt_project: @debt_project,
+      trackable: @task,
+      action: "updated_task",
+      details: @task.saved_changes
+    )
+  end
+
+  def log_task_deletion
+    ActivityLog.create!(
+      user: current_user,
+      debt_project: @debt_project,
+      trackable: @task,
+      action: "deleted_task",
+      details: @task.attributes
+    )
+  end
+
+
 end
