@@ -27,7 +27,7 @@ class TaskPolicy < ApplicationPolicy
 
     def user_is_group_member?
     record.debt_project.group_memberships.exists?(user: user)
-  end
+    end
 
   def user_is_schuldner?
     membership = record.debt_project.group_memberships.find_by(user: user)

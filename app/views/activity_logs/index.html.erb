@@ -1,44 +1,70 @@
-<%= link_to "Logs als CSV runterladen", activity_logs_path(format: :csv), class: "btn btn-secondary mb-4" %>
+<div class="main-container">
 
+  <h1 class="mb-4">Aktivitätsprotokolle</h1>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Datum</th>
-      <th>Benutzer</th>
-      <th>Aktion</th>
-      <th>Zusammenhang</th>
-      <th>Details</th>
-    </tr>
-  </thead>
+  <%= link_to "Logs als CSV runterladen", activity_logs_path(format: :csv), class: "btn btn-secondary mb-4" %>
 
-  <tbody>
-    <% @activity_logs.each do |log| %>
-      <tr>
-        <%# Korrektur der Datumsausgabe, falls 'l' nicht funktioniert %>
-        <td><%= log.created_at ? l(log.created_at, format: :short) : 'N/A' %></td>
-        <td><%= log.user.username %></td>
-        <td><%= log.action %></td>
-        <td>
-          <% if log.trackable.is_a?(Task) %>
-            Aufgabe: <%= link_to log.trackable.title, debt_project_task_path(log.debt_project, log.trackable) %>
-          <% elsif log.trackable.is_a?(User) %>
-            Benutzer: <%= log.trackable.username %>
-          <% else %>
-            Keine
+  <div class="card p-0">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Datum</th>
+          <th>Benutzer</th>
+          <th>Aktion</th>
+          <th>Zusammenhang</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% if @activity_logs.empty? %>
+          <tr>
+            <td colspan="5" class="text-center text-gray-500 py-4">Es wurden keine Aktivitäten gefunden.</td>
+          </tr>
+        <% else %>
+          <% @activity_logs.each do |log| %>
+            <tr>
+              <%# Datumsausgabe (abhängig von deiner l-Helper-Definition) %>
+              <td><%= log.created_at ? l(log.created_at, format: :short) : 'N/A' %></td>
+              
+              <%# Benutzerinformationen %>
+              <td><%= log.user.present? ? log.user.username : 'System' %></td>
+              
+              <%# Aktion %>
+              <td><%= log.action %></td>
+              
+              <%# Zusammenhang (Task/Project/User) - Fix für fehlendes DebtProject %>
+              <td>
+                <% if log.trackable.is_a?(Task) %>
+                  <%# Überprüfen, ob das Projekt existiert, bevor der Link erstellt wird %>
+                  <% if log.debt_project.present? %>
+                    Aufgabe: <%= link_to log.trackable.title, debt_project_task_path(log.debt_project, log.trackable) %>
+                  <% else %>
+                    Aufgabe: <%= log.trackable.title %> (Projekt gelöscht)
+                  <% end %>
+                <% elsif log.trackable.is_a?(User) %>
+                  Benutzer: <%= log.trackable.username %>
+                <% elsif log.trackable.is_a?(DebtProject) %>
+                    Projekt: <%= log.trackable.name %>
+                <% else %>
+                  Keine
+                <% end %>
+              </td>
+              
+              <%# Details %>
+              <td>
+                <% if log.details.is_a?(Hash) || log.details.is_a?(Array) %>
+                  <pre class="overflow-auto text-xs bg-gray-50 p-2 rounded max-h-40"><%= JSON.pretty_generate(log.details) %></pre>
+                <% elsif log.details.present? %>
+                  <pre class="overflow-auto text-xs bg-gray-50 p-2 rounded max-h-40"><%= log.details.to_s %></pre>
+                <% else %>
+                  Keine Details
+                <% end %>
+              </td>
+            </tr>
           <% end %>
-        </td>
-        <td>
-          <%# FIX: Sicherstellen, dass Details existieren und als Hash/JSON behandelt werden können %>
-          <% if log.details.is_a?(Hash) || log.details.is_a?(Array) %>
-            <pre><%= JSON.pretty_generate(log.details) %></pre>
-          <% elsif log.details.present? %>
-            <pre><%= log.details.to_s %></pre>
-          <% else %>
-            Keine Details
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

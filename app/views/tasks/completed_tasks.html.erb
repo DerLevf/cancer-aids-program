@@ -15,6 +15,7 @@
             <strong>Status:</strong> 
             <span class="member status-tag status-completed"><%= task.status.humanize %></span>
           </p>
+          <p><strong>Abgeschlossener Betrag:</strong> <%= number_to_currency(task.amount) %></p>
           <p><strong>Abgeschlossen am/Aktualisiert:</strong> <%= task.updated_at.strftime("%d.%m.%Y um %H:%M") %></p>
         </div>
       <% end %>
