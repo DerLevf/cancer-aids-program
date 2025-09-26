@@ -52,7 +52,12 @@
 <script>
   document.addEventListener("turbo:load", () => {
     document.querySelectorAll(".clickable-row").forEach(row => {
-      row.addEventListener("click", () => {
+      row.addEventListener("click", (event) => {
+        if (event.target.closest('a') || event.target.closest('button')) {
+
+          return;
+        }
+
         window.location = row.dataset.href;
       });
     });
