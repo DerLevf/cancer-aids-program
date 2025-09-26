@@ -6,6 +6,7 @@ class TaskPolicy < ApplicationPolicy
 
   def update?
     user_is_schuldner?
+    !record.completed?
   end
 
   def destroy?

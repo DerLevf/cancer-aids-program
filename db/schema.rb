@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_25_191410) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_26_024443) do
   create_table "activity_logs", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "debt_project_id"
@@ -51,10 +51,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_25_191410) do
     t.text "description"
     t.date "deadline"
     t.integer "status"
-    t.integer "assigned_to_id", null: false
+    t.integer "assigned_to_id"
     t.integer "debt_project_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "amount", precision: 10, scale: 2, default: "0.0"
     t.index ["assigned_to_id"], name: "index_tasks_on_assigned_to_id"
     t.index ["debt_project_id"], name: "index_tasks_on_debt_project_id"
   end
@@ -66,6 +67,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_25_191410) do
     t.decimal "budget"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "debt_balance", precision: 10, scale: 2, default: "0.0"
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
   add_foreign_key "activity_logs", "debt_projects"

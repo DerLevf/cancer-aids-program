@@ -5,6 +5,7 @@ class ActivityLogsController < ApplicationController
     @activity_logs = ActivityLog.order(created_at: :desc)
                                 .includes(:user, :trackable, :debt_project)
                                 .limit(50)
+
     authorize @activity_logs
   end
 

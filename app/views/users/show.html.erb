@@ -1,12 +1,12 @@
 <div class="profile card">
+  <% @user.reload if @user.persisted? %>
   <h1>Profil von <%= @user.username %></h1>
 
   <div class="details-section">
     <p><strong>Benutzername:</strong> <%= @user.username %></p>
     <p><strong>E-Mail:</strong> <%= @user.email %></p>
-    <p><strong>Budget:</strong> <%= number_to_currency(@user.budget || 0, unit: "CHF") %></p>
+    <p><strong>Kontostand (Budget):</strong> <%= number_to_currency(@user.budget || 0, unit: "CHF") %></p>
   </div>
-
   <hr>
 
   <h2>Deine Schuldengruppen</h2>
@@ -17,7 +17,7 @@
           <%= link_to debt_project_path(project), class: "list-link-block" do %>
             <span><%= project.name %></span>
             <span class="member-tag role">
-              Rolle: <%= project.group_memberships.find_by(user: @user)&.role %>
+              Rolle: <%= project.group_memberships.find_by(user: @user)&.role.humanize %>
             </span>
           <% end %>
         </li>
@@ -29,23 +29,25 @@
 
   <hr>
 
-  <h2>Von dir erstellte Gruppen</h2>
-  <% if @created_projects.any? %>
+  <h2>Dir zugewiesene Aufgaben</h2>
+  <%# Die @assigned_tasks Liste enthält nun nur NICHT-erledigte Aufgaben %>
+  <% if @assigned_tasks.any? %>
     <ul class="styled-list">
-      <% @created_projects.each do |project| %>
+      <% @assigned_tasks.each do |task| %>
         <li>
-          <%= link_to debt_project_path(project), class: "list-link-block" do %>
-            <span><%= project.name %></span>
+          <%= link_to debt_project_task_path(task.debt_project, task), class: "list-link-block" do %>
+            <span class="task-title"><%= task.title %></span>
+            <span class="member-tag status-<%= task.status %>"><%= task.status.humanize %></span>
+            <span class="group-name"><%= task.debt_project.name %></span>
           <% end %>
         </li>
       <% end %>
     </ul>
   <% else %>
-    <p class="empty-state">Du hast noch keine Gruppe erstellt.</p>
+    <p class="empty-state">Keine Aufgaben zugewiesen.</p>
   <% end %>
 
   <hr>
-
   <h2>Dir zugewiesene Aufgaben</h2>
   <% if @assigned_tasks.any? %>
     <ul class="styled-list">

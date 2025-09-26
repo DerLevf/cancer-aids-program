@@ -32,12 +32,17 @@ before_action :set_task, only: [ :show, :edit, :update, :destroy ]
   end
 
   def update
+    # FIX: Policy-Prüfung hinzufügen. Pundit ruft TaskPolicy#update? auf.
     authorize @task
+
     if @task.update(task_params)
       redirect_to debt_project_path(@debt_project), notice: "Aufgabe aktualisiert!"
     else
       render :edit, status: :unprocessable_entity
     end
+  rescue Pundit::NotAuthorizedError
+    # Optionale Behandlung: Leite auf die Projektseite um mit einer spezifischen Fehlermeldung
+    redirect_to debt_project_path(@debt_project), alert: "Fehler: Erledigte Aufgaben können nicht geändert werden."
   end
 
 def completed_tasks
@@ -54,13 +59,9 @@ end
   private
 
   def set_debt_project
-    # This must handle both :id (from member route) and :debt_project_id
-    project_id = params[:debt_project_id] || params[:id]
-    @debt_project = DebtProject.find(project_id)
+    @debt_project = DebtProject.find(params[:debt_project_id])
   end
-
   def set_task
-    # FIX: Use find_by to prevent NoMethodError if the task doesn't exist
     @task = @debt_project.tasks.find_by(id: params[:id]) 
     
     unless @task
@@ -68,10 +69,18 @@ end
     end
   end
 
-def task_params
-  params.require(:task).permit(:title, :description, :status, :deadline,
-                                :assigned_to_id)
-end
+  private
+  
+  def task_params
+    params.require(:task).permit(
+      :title, 
+      :description, 
+      :assigned_to_id, 
+      :deadline, 
+      :status, 
+      :amount 
+    )
+  end
 
 
 

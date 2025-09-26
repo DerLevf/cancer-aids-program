@@ -16,14 +16,7 @@
 
   <div class="details-section card">
     <p><strong>Beschreibung:</strong> <%= @task.description %></p>
-    <p>
-      <strong>Zugewiesen an:</strong> 
-      <% if @task.assigned_user %>
-        <span class="member-tag debtor"><%= @task.assigned_user.username %></span>
-      <% else %>
-        Nicht zugewiesen
-      <% end %>
-    </p>
+
     <p><strong>Status:</strong> 
   <% unless @task.status == "completed" %>
     <span class="member-tag status-<%= @task.status %>">
