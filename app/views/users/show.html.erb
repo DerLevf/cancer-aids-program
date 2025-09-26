@@ -47,25 +47,7 @@
     <p class="empty-state">Keine Aufgaben zugewiesen.</p>
   <% end %>
 
-  <hr>
-  <h2>Dir zugewiesene Aufgaben</h2>
-  <% if @assigned_tasks.any? %>
-    <ul class="styled-list">
-      <% @assigned_tasks.each do |task| %>
-        <li>
-          <%= link_to debt_project_task_path(task.debt_project, task), class: "list-link-block" do %>
-            <span class="task-title"><%= task.title %></span>
-            <span class="member-tag status-<%= task.status %>"><%= task.status.humanize %></span>
-            <span class="group-name"><%= task.debt_project.name %></span>
-          <% end %>
-        </li>
-      <% end %>
-    </ul>
-  <% else %>
-    <p class="empty-state">Keine Aufgaben zugewiesen.</p>
-  <% end %>
 
-  <hr>
 
   <%= link_to "Profil bearbeiten", edit_user_path(@user), class: "btn btn-warning" %>
 </div>

@@ -129,13 +129,14 @@ end
   end
 
   def log_project_deletion
-    # Das Projekt ist bereits gelöscht, aber wir verwenden die Instanzvariable
+    deleted_project_details = @debt_project.attributes.slice("id", "name") 
+    
     ActivityLog.create!(
       user: current_user,
-      debt_project: @debt_project, # Kann hier trotzdem referenziert werden
-      trackable: @debt_project,
+      debt_project: nil, 
+      trackable: nil,    
       action: "deleted_debt_project",
-      details: @debt_project.attributes
+      details: deleted_project_details 
     )
   end
 

@@ -35,6 +35,7 @@ class DebtProjectPolicy < ApplicationPolicy
 
   def show_completed_tasks?
     user_is_role?(:debt_collector)
+    record.group_memberships.exists?(user: user)
   end
 
   private

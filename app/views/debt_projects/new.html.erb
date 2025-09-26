@@ -2,41 +2,42 @@
 
 <%= form_for @debt_project do |f| %>
   <div>
-    <%# HINZUFÜGEN von required: true %>
     <%= f.label :name, "Name der Gruppe:" %>
     <%= f.text_field :name, required: true %>
   </div>
 
   <div>
-    <%# HINZUFÜGEN von required: true %>
     <%= f.label :total_amount, "Gesamtbetrag:" %>
     <%= f.number_field :total_amount, step: 0.01, required: true %>
   </div>
 
   <div>
-    <%# HINZUFÜGEN von required: true %>
     <%= f.label :deadline, "Frist:" %>
     <%= f.date_field :deadline, required: true %>
   </div>
 
   <h3>Mitglieder hinzufügen</h3>
 
-  <div>
-    <%= check_box_tag "debt_project[user_ids][]", current_user.id, true, disabled: true %>
-    <%= current_user.username %> (Debtcollector)
+  <%# FIX: Debtcollector in einem flexiblen Label umschließen %>
+  <div class="field">
+    <label style="display: flex; align-items: center;">
+      <%= check_box_tag "debt_project[user_ids][]", current_user.id, true, disabled: true, class: "mr-2" %>
+      <%= current_user.username %> (Debtcollector)
+    </label>
   </div>
 
-  <%# 🚨 Hinweis: Die Validierung von Checkboxen/Mitgliedern muss im Controller/Modell erfolgen %>
   <%= hidden_field_tag "debt_project[schuldner_ids][]" %>
 
   <% @other_users.each do |user| %>
     <% membership = @debt_project.schuldner.find_by(user_id: user.id) %>
-    <div>
-      <%= check_box_tag "debt_project[schuldner_ids][]", user.id, membership.present?, id: "debt_project_user_ids_#{user.id}" %>
-      <%= label_tag "debt_project_user_ids_#{user.id}", "#{user.username} (Schuldner)" %>
+    <div class="field">
+      <%# FIX: Das Label umschließt Checkbox und Text und verwendet Flex-Styling %>
+      <%= label_tag "debt_project_user_ids_#{user.id}", style: "display: flex; align-items: center;" do %>
+        <%= check_box_tag "debt_project[schuldner_ids][]", user.id, membership.present?, id: "debt_project_user_ids_#{user.id}", class: "mr-2" %>
+        <%= "#{user.username} (Schuldner)" %>
+      <% end %>
     </div>
   <% end %>
-
 
   <%= f.submit "Gruppe erstellen", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2" %>
 <% end %>

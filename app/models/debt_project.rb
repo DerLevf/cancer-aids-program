@@ -2,16 +2,16 @@ class DebtProject < ApplicationRecord
   belongs_to :creator, class_name: "User"
 
   has_many :group_memberships, dependent: :destroy
-  has_many :schuldner, -> { where(group_memberships: { role: :schuldner }) }, class_name: "User", source: :user, through: :group_memberships
-  has_many :users, through: :group_memberships
-
+  has_many :activity_logs, dependent: :destroy
   has_many :tasks, dependent: :destroy
 
-
-
-  # Erwartet einen positiven Betrag und zieht ihn vom Gesamtbetrag ab.
+  has_many :schuldner, -> { where(group_memberships: { role: :schuldner }) }, 
+             class_name: "User", 
+             source: :user, 
+             through: :group_memberships 
+             
+  has_many :users, through: :group_memberships 
   def update_total_amount(amount_to_subtract)
-    # Stellt sicher, dass der Betrag positiv ist, bevor subtrahiert wird.
     validated_amount = amount_to_subtract.to_f.abs 
 
     DebtProject.transaction do

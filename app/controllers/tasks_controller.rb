@@ -1,15 +1,13 @@
 class TasksController < ApplicationController
   before_action :authenticate_user!
   before_action :set_debt_project
-before_action :set_task, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_task, only: [ :show, :edit, :update, :destroy ]
   after_action :log_task_creation, only: [:create]
   after_action :log_task_update, only: [:update]
   after_action :log_task_deletion, only: [:destroy]
 
   def show
-    # @task is set by the before_action :set_task
     authorize @task
-    # Renders app/views/tasks/show.html.erb
   end
 
   def new
@@ -32,7 +30,6 @@ before_action :set_task, only: [ :show, :edit, :update, :destroy ]
   end
 
   def update
-    # FIX: Policy-Prüfung hinzufügen. Pundit ruft TaskPolicy#update? auf.
     authorize @task
 
     if @task.update(task_params)
@@ -41,14 +38,13 @@ before_action :set_task, only: [ :show, :edit, :update, :destroy ]
       render :edit, status: :unprocessable_entity
     end
   rescue Pundit::NotAuthorizedError
-    # Optionale Behandlung: Leite auf die Projektseite um mit einer spezifischen Fehlermeldung
     redirect_to debt_project_path(@debt_project), alert: "Fehler: Erledigte Aufgaben können nicht geändert werden."
   end
 
-def completed_tasks
-  authorize @debt_project, :show_completed_tasks? 
-  @completed_tasks = @debt_project.tasks.where(status: 1).order(updated_at: :desc)
-end
+  def completed_tasks
+    authorize @debt_project, :show_completed_tasks? 
+@completed_tasks = @debt_project.tasks.where(status: :completed).order(updated_at: :desc)
+ end
 
   def destroy
     authorize @task
@@ -59,18 +55,24 @@ end
   private
 
   def set_debt_project
-    @debt_project = DebtProject.find(params[:debt_project_id])
+    project_id = params[:debt_project_id]
+    @debt_project = DebtProject.find_by(id: project_id)
+
+    unless @debt_project
+      redirect_to user_path(current_user), alert: "Die angeforderte Schuldengruppe existiert nicht oder wurde nicht gefunden."
+      return
+    end
   end
+
   def set_task
     @task = @debt_project.tasks.find_by(id: params[:id]) 
     
     unless @task
-      redirect_to debt_project_path(@debt_project), alert: "Die angeforderte Aufgabe wurde nicht gefunden."
+      redirect_to user_path(current_user), alert: "Die angeforderte Aufgabe existiert nicht."
+      return
     end
   end
 
-  private
-  
   def task_params
     params.require(:task).permit(
       :title, 
@@ -81,8 +83,6 @@ end
       :amount 
     )
   end
-
-
 
   def log_task_creation
     ActivityLog.create!(
@@ -113,6 +113,4 @@ end
       details: @task.attributes
     )
   end
-
-
 end
