@@ -4,7 +4,8 @@
 
 <% if @debt_projects.any? %>
   <div class="table-container">
-    <table class="debt-projects-table">
+    <%# ADD: data-controller attribute to the table for Stimulus %>
+    <table class="debt-projects-table" data-controller="table-link"> 
       <thead>
         <tr>
           <th>Name</th>
@@ -17,7 +18,9 @@
       </thead>
       <tbody>
         <% @debt_projects.each do |project| %>
-          <tr class="clickable-row" data-href="<%= debt_project_path(project) %>">
+          <tr class="clickable-row" 
+              data-href="<%= debt_project_path(project) %>"
+              data-action="click->table-link#navigate"> <%# ADD: Stimulus action %>
             <td><%= project.name %></td>
             <td><%= number_to_currency(project.total_amount || 0, unit: "CHF") %></td>
             <td><%= project.deadline&.strftime("%d.%m.%Y") || "-" %></td>
@@ -25,7 +28,8 @@
             <td>
               <% project.group_memberships.includes(:user).each do |membership| %>
                 <% next unless membership.user %>
-                <span class="member <%= membership.role %>">
+                <%# FIX: Ensure CSS classes match your roles (e.g., 'member' and 'owner') %>
+                <span class="member member-<%= membership.role %>"> 
                   <%= membership.user.username %>
                 </span>
               <% end %>
@@ -49,17 +53,4 @@
   <p>Du bist noch in keiner Schuldengruppe.</p>
 <% end %>
 
-<script>
-  document.addEventListener("turbo:load", () => {
-    document.querySelectorAll(".clickable-row").forEach(row => {
-      row.addEventListener("click", (event) => {
-        if (event.target.closest('a') || event.target.closest('button')) {
-
-          return;
-        }
-
-        window.location = row.dataset.href;
-      });
-    });
-  });
-</script>
+<%# REMOVED THE INLINE <SCRIPT> BLOCK %>

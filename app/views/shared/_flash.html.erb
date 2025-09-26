@@ -1,0 +1,36 @@
+<div id="flash-container">
+  <% if flash.any? %>
+    <% flash.each do |type, msg| %>
+      
+      <% alert_class = case type.to_sym
+        when :notice then "flash-notice"
+        when :alert, :error then "flash-error"
+        else "flash-info"
+      end %>
+
+      <div class="flash-message <%= alert_class %>" 
+           role="alert"
+           data-controller="autohide"        <%# Connects to the global JS %>
+           data-autohide-delay-value="4000"> <%# Passes the delay value %>
+
+        <%# Icon %>
+        <div class="flash-icon">
+          <% if type.to_sym == :alert || type.to_sym == :error %>
+            
+          <% elsif type.to_sym == :notice %>
+            
+          <% else %>
+            
+          <% end %>
+        </div>
+
+        <%# Message text %>
+        <div class="flash-content">
+          <p class="flash-title"><%= type.to_s.capitalize %></p>
+          <p class="flash-text"><%= msg %></p>
+        </div>
+
+      </div>
+    <% end %>
+  <% end %>
+</div>

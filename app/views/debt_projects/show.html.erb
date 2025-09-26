@@ -8,8 +8,8 @@
     <p><strong>Erstellt von:</strong> <%= @debt_project.creator&.username || "Unbekannt" %></p>
   </div>
 
-  <div class="action-buttons-group">
-    <%# Bearbeiten & Löschen nur für DebtCollector %>
+  <%# CORRECTED: Single action-buttons-group for primary actions %>
+  <div class="action-buttons-group"> 
     <% if policy(@debt_project).edit? %>
       <%= link_to "Bearbeiten", edit_debt_project_path(@debt_project), class: "btn btn-warning" %>
     <% end %>
@@ -17,23 +17,18 @@
     <% if policy(@debt_project).destroy? %>
       <%= button_to "Löschen", debt_project_path(@debt_project), method: :delete, data: { turbo_confirm: "Willst du diese Gruppe wirklich löschen?" }, class: "btn btn-danger" %>
     <% end %>
-
-    <%# Fügen Sie diesen Button zur Aktionsgruppe hinzu: %>
-<div class="action-buttons-group">
-  <%# ... (Bearbeiten & Löschen Buttons) ... %>
-
-  <% if policy(@debt_project).show_completed_tasks? %>
-    <%= link_to "Abgeschlossene Aufgaben anzeigen", completed_tasks_debt_project_path(@debt_project), class: "btn btn-primary" %>
-  <% end %>
-</div>
+    
+    <% if policy(@debt_project).show_completed_tasks? %>
+      <%= link_to "Abgeschlossene Aufgaben anzeigen", completed_tasks_debt_project_path(@debt_project), class: "btn btn-primary" %>
+    <% end %>
   </div>
 
   <h2>Mitglieder</h2>
   <ul class="member-list card">
     <% @debt_project.group_memberships.includes(:user).each do |membership| %>
       <% next unless membership.user %>
-      <%# Use the CSS classes defined for membership roles %>
-      <li class="member <%= membership.role.to_s.underscore %>">
+      <%# Corrected class to match CSS: member-schuldner or member-debtcollector %>
+      <li class="member member-<%= membership.role.to_s.underscore %>"> 
         <%= membership.user.username %> (<%= membership.role.humanize %>)
       </li>
     <% end %>
@@ -44,7 +39,6 @@
 <h2>Aufgaben</h2>
 <div class="tasks-list">
   <% @debt_project.tasks.each do |task| %>
-    <%# 1. New Logic: Skip rendering if the task is completed %>
     <% next if task.status == 'completed' %>
 
     <div class="card task-item">
@@ -55,7 +49,6 @@
       <p>
         <strong>Status:</strong> 
         <% 
-          # 2. Logic to determine if the task is overdue (assuming a method exists)
           task_status_class = if task.deadline.present? && task.deadline < Date.today && task.status != 'completed'
                                 'overdue'
                               else
@@ -63,7 +56,7 @@
                               end
         %>
         
-        <span class="member status-tag status-<%= task_status_class %>"><%= task.status.humanize %></span>
+        <span class="member status-tag status-<%= task_status_class %>"><%= task_status_class.humanize %></span>
       </p>
 
       <div class="task-actions">
@@ -79,7 +72,6 @@
   <% end %>
 </div>
 
-  <%# Neue Aufgabe nur für Berechtigte %>
   <% if policy(Task.new(debt_project: @debt_project)).create? %>
     <%= link_to "Neue Aufgabe", new_debt_project_task_path(@debt_project), class: "btn btn-primary new-task-button" %>
   <% end %>

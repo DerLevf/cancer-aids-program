@@ -1,5 +1,10 @@
+/*
+ * =================================================================
+ * 1. BASE STYLES & LAYOUT
+ * =================================================================
+ */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: -apple-system, BlinkMacMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     background-color: #f7f9fb;
     color: #333;
     margin: 0;
@@ -13,15 +18,23 @@ body {
     padding: 40px 30px; 
 }
 
-input[type="hidden"] { display: none !important; }
+/* Accessibility: Ensure hidden inputs are actually hidden */
+input[type="hidden"] { 
+    display: none !important; 
+}
 
+/*
+ * =================================================================
+ * 2. TYPOGRAPHY & FORMS
+ * =================================================================
+ */
 h1 {
     font-size: 2.25rem;
     font-weight: 800;
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 2px solid #e0e0e0;
-    color: #4a75aa;
+    color: #4a75aa; /* Primary Blue */
 }
 
 h2 {
@@ -40,7 +53,7 @@ label {
     font-size: 0.9rem;
 }
 
-/* Inputs */
+/* Inputs, Textareas, Selects: Grouped for consistency */
 input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
 textarea,
 select {
@@ -51,7 +64,8 @@ select {
     border: 1px solid #ccc;
     border-radius: 6px;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: all 0.2s ease-in-out; /* Use 'all' for smoother transition */
+    box-sizing: border-box; /* IMPORTANT: Ensures padding doesn't affect total width */
 }
 
 input:focus,
@@ -62,7 +76,11 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(74, 117, 170, 0.25);
 }
 
-/* Buttons */
+/*
+ * =================================================================
+ * 3. BUTTONS (BTN)
+ * =================================================================
+ */
 .btn {
   display: inline-block;
   padding: 10px 18px;
@@ -72,25 +90,28 @@ select:focus {
   text-decoration: none;
   font-size: 0.95rem;
   transition: background-color 0.2s ease;
-  width: 100%; /* gleich breit */
-  box-sizing: border-box;
+  width: 100%; /* Full width consistency */
+  box-sizing: border-box; 
+  margin-top: 0.4rem; /* Applied directly to the base class */
 }
-.btn,
+
+/* Combine list-link-block with btn margin since it shares margin-top */
 .list-link-block {
     margin-top: 0.4rem; 
 }
 
-/* Blau */
+/* Primary Button (Blue) */
 .btn-primary {
   background-color: #4a75aa;
   color: white;
+  border: 1px solid transparent; /* Added border for hover stability */
 }
 
 .btn-primary:hover {
   background-color: #3b5a82;
 }
 
-/* Gelb */
+/* Warning Button (Yellow) */
 .btn-warning {
   background-color: #ffe08a;
   color: #7c6c21;
@@ -101,7 +122,7 @@ select:focus {
   background-color: #fdd067;
 }
 
-/* Rot */
+/* Danger Button (Red) */
 .btn-danger {
   background-color: #f8d7da;
   color: #721c24;
@@ -110,40 +131,25 @@ select:focus {
 
 .btn-danger:hover {
   background-color: #f5c6cb;
-  color: #721c24;
 }
+/* Removed duplicate color rule on hover, border color is sufficient */
 
-/* Cards & Flash */
+
+/*
+ * =================================================================
+ * 4. STRUCTURE (CARDS, LISTS, TABLES)
+ * =================================================================
+ */
 .card,
 .list-item {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Slightly stronger shadow */
     margin-bottom: 20px;
 }
 
-.flash {
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-    border: 1px solid transparent;
-    font-weight: 500;
-}
-
-.flash.notice {
-    color: #155724;
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-}
-
-.flash.alert {
-    color: #721c24;
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
-}
-
-/* Tabelle */
+/* Table Container (Keep for responsiveness) */
 .table-container {
     overflow-x: auto;
     margin-top: 20px;
@@ -180,21 +186,138 @@ select:focus {
     background-color: #f7faff;
 }
 
-/* Mitglieder */
-.member {
-    display: inline-block;
-    margin-right: 8px;
-    padding: 4px 8px;
+/*
+ * =================================================================
+ * 5. FLASH MESSAGES (Legacy & Turbo)
+ * =================================================================
+ */
+
+/* Legacy Flash Messages (For full HTML redirects - keep for fallback) */
+.flash {
+    padding: 15px;
+    margin-bottom: 20px;
     border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #fff;
+    border: 1px solid transparent;
+    font-weight: 500;
 }
 
-.member.debt_collector {
-    background-color: #f78da7; /* sanftes Pink für Collector */
+.flash.notice { /* Standard Rails notice color */
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
 }
 
-.member.schuldner {
-    background-color: #7baaf7; /* helles Blau für Schuldner */
+.flash.alert { /* Standard Rails alert color */
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* TURBO / TOAST FLASH MESSAGES (New Auto-hide styles) */
+
+/* Flash container position (fixed and centered) */
+#flash-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1050;
+  width: 100%;
+  max-width: 400px;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+/* Base flash message for auto-hide */
+.flash-message {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Flash Icons & Content */
+.flash-icon {
+    margin-right: 12px;
+    /* Optional: Center the icon vertically with flex if text is multi-line */
+}
+
+.flash-content {
+    flex-grow: 1;
+}
+
+.flash-title {
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+}
+
+.flash-text {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Flash box colors (Red for Error/Alert) */
+.flash-error {
+  background-color: #fef2ff; /* Soft purple-pink based on .member.error */
+  border-left: 5px solid #f78da7;
+  color: #721c24; /* Keep text dark for contrast */
+}
+
+/* Flash box colors (Blue for Notice) */
+.flash-notice {
+  background-color: #eff6ff;
+  border-left: 5px solid #7baaf7;
+  color: #1e3a8a;
+}
+
+/* Flash box colors (Green for Info) */
+.flash-info {
+  background-color: #f0fdfa;
+  border-left: 5px solid #10b981;
+  color: #065f46;
+}
+
+/* Base member styling */
+.member {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #296324; /* default text color for readability */
+}
+
+/* Debt Collector (Collector / Pink) */
+.member-debt_collector {
+  background-color: #f78da7; /* soft pink */
+  color: #fff;               /* text white for contrast */
+}
+
+/* Schuldner (Debtor / Blue) */
+.member-schuldner {
+  background-color: #7baaf7; /* light blue */
+  color: #fff;               /* text white for contrast */
+}
+
+/* Optional: completed tasks / other statuses */
+.member.completed {
+  background-color: #4b5563; /* gray/dark neutral */
+  color: #fff;
+}
+
+.member.overdue {
+  background-color: #ef4444; /* red danger */
+  color: #fff;
+}
+
+.member.in_progress {
+  background-color: #e5e7eb; /* light gray */
+  color: #4b5563;            /* darker text for readability */
 }
