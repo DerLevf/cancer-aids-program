@@ -1,4 +1,5 @@
-<h1>Aktivitätsprotokolle</h1>
+<%= link_to "Logs als CSV auf dieser Seite anzeigen", activity_logs_path(format: :csv), class: "btn btn-secondary mb-4" %>
+
 
 <table class="table">
   <thead>
@@ -14,7 +15,8 @@
   <tbody>
     <% @activity_logs.each do |log| %>
       <tr>
-        <td><%= l(log.created_at, format: :short) %></td>
+        <%# Korrektur der Datumsausgabe, falls 'l' nicht funktioniert %>
+        <td><%= log.created_at ? l(log.created_at, format: :short) : 'N/A' %></td>
         <td><%= log.user.username %></td>
         <td><%= log.action %></td>
         <td>
@@ -27,7 +29,14 @@
           <% end %>
         </td>
         <td>
-          <pre><%= log.details.present? ? JSON.pretty_generate(log.details) : "Keine Details" %></pre>
+          <%# FIX: Sicherstellen, dass Details existieren und als Hash/JSON behandelt werden können %>
+          <% if log.details.is_a?(Hash) || log.details.is_a?(Array) %>
+            <pre><%= JSON.pretty_generate(log.details) %></pre>
+          <% elsif log.details.present? %>
+            <pre><%= log.details.to_s %></pre>
+          <% else %>
+            Keine Details
+          <% end %>
         </td>
       </tr>
     <% end %>
