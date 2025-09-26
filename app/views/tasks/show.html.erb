@@ -24,7 +24,15 @@
         Nicht zugewiesen
       <% end %>
     </p>
-    <p><strong>Status:</strong> <span class="member-tag status-<%= @task.status %>"><%= @task.status.humanize %></span></p>
+    <p><strong>Status:</strong> 
+  <% unless @task.status == "completed" %>
+    <span class="member-tag status-<%= @task.status %>">
+      <%= @task.status.humanize %>
+    </span>
+  <% else %>
+    <em>Erledigt (wird im Archiv angezeigt)</em>
+  <% end %>
+</p>
     
     <% if @task.deadline %>
       <p><strong>Frist:</strong> <%= @task.deadline.strftime("%d.%m.%Y") %></p>

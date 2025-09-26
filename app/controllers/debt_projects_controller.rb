@@ -35,8 +35,13 @@ def edit
   @other_users = User.where.not(id: current_user.id)
 end
 
+  def show_completed_tasks?
+    # Erlaubt, wenn der Benutzer die Rolle 'debt_collector' in diesem Projekt hat
+    user_is_role?(:debt_collector)
+  end
+
 def new
-  # 1. Authorization checks the DebtProject class, not an instance
+  # 1. Authorization checks the DebtProject class, not an instances
   authorize DebtProject 
   
   # 2. The instance variable MUST be created for the view

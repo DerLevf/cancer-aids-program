@@ -17,6 +17,15 @@
     <% if policy(@debt_project).destroy? %>
       <%= button_to "Löschen", debt_project_path(@debt_project), method: :delete, data: { turbo_confirm: "Willst du diese Gruppe wirklich löschen?" }, class: "btn btn-danger" %>
     <% end %>
+
+    <%# Fügen Sie diesen Button zur Aktionsgruppe hinzu: %>
+<div class="action-buttons-group">
+  <%# ... (Bearbeiten & Löschen Buttons) ... %>
+
+  <% if policy(@debt_project).show_completed_tasks? %>
+    <%= link_to "Abgeschlossene Aufgaben anzeigen", completed_tasks_debt_project_path(@debt_project), class: "btn btn-primary" %>
+  <% end %>
+</div>
   </div>
 
   <h2>Mitglieder</h2>
@@ -32,31 +41,43 @@
   
   <hr class="separator">
 
-  <h2>Aufgaben</h2>
-  <div class="tasks-list">
-    <% @debt_project.tasks.each do |task| %>
-      <div class="card task-item">
-        <p><strong>Titel:</strong> <%= task.title %></p>
-        <p><strong>Beschreibung:</strong> <%= task.description %></p>
-        <p><strong>Zugewiesen an:</strong> <%= task.assigned_user&.username || "Nicht zugewiesen" %></p>
-        <p>
-          <strong>Status:</strong> 
-          <span class="member status-tag status-<%= task.status %>"><%= task.status.humanize %></span>
-        </p>
+<h2>Aufgaben</h2>
+<div class="tasks-list">
+  <% @debt_project.tasks.each do |task| %>
+    <%# 1. New Logic: Skip rendering if the task is completed %>
+    <% next if task.status == 'completed' %>
 
-        <div class="task-actions">
-          <%# Bearbeiten & Löschen nur für Berechtigte %>
-          <% if policy(task).update? %>
-            <%= link_to "Bearbeiten", edit_debt_project_task_path(@debt_project, task), class: "btn btn-warning btn-small" %>
-          <% end %>
+    <div class="card task-item">
+      <p><strong>Titel:</strong> <%= task.title %></p>
+      <p><strong>Beschreibung:</strong> <%= task.description %></p>
+      <p><strong>Zugewiesen an:</strong> <%= task.assigned_user&.username || "Nicht zugewiesen" %></p>
+      
+      <p>
+        <strong>Status:</strong> 
+        <% 
+          # 2. Logic to determine if the task is overdue (assuming a method exists)
+          task_status_class = if task.deadline.present? && task.deadline < Date.today && task.status != 'completed'
+                                'overdue'
+                              else
+                                task.status
+                              end
+        %>
+        
+        <span class="member status-tag status-<%= task_status_class %>"><%= task.status.humanize %></span>
+      </p>
 
-          <% if policy(task).destroy? %>
-            <%= button_to "Löschen", debt_project_task_path(@debt_project, task), method: :delete, data: { turbo_confirm: "Willst du diese Aufgabe wirklich löschen?" }, class: "btn btn-danger btn-small" %>
-          <% end %>
-        </div>
+      <div class="task-actions">
+        <% if policy(task).update? %>
+          <%= link_to "Bearbeiten", edit_debt_project_task_path(@debt_project, task), class: "btn btn-warning btn-small" %>
+        <% end %>
+
+        <% if policy(task).destroy? %>
+          <%= button_to "Löschen", debt_project_task_path(@debt_project, task), method: :delete, data: { turbo_confirm: "Willst du diese Aufgabe wirklich löschen?" }, class: "btn btn-danger btn-small" %>
+        <% end %>
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
+</div>
 
   <%# Neue Aufgabe nur für Berechtigte %>
   <% if policy(Task.new(debt_project: @debt_project)).create? %>

@@ -1,54 +1,69 @@
-<h1>Profil von <%= @user.username %></h1>
+<div class="profile card">
+  <h1>Profil von <%= @user.username %></h1>
 
-<p><strong>Benutzername:</strong> <%= @user.username %></p>
-<p><strong>E-Mail:</strong> <%= @user.email %></p>
-<p><strong>Budget:</strong> <%= number_to_currency(@user.budget || 0, unit: "CHF") %></p>
+  <div class="details-section">
+    <p><strong>Benutzername:</strong> <%= @user.username %></p>
+    <p><strong>E-Mail:</strong> <%= @user.email %></p>
+    <p><strong>Budget:</strong> <%= number_to_currency(@user.budget || 0, unit: "CHF") %></p>
+  </div>
 
-<hr>
+  <hr>
 
-<h2>Deine Schuldengruppen</h2>
-<% if @debt_projects.any? %>
-  <ul>
-    <% @debt_projects.each do |project| %>
-      <li>
-        <%= link_to project.name, debt_project_path(project) %>
-        (Rolle: <%= project.group_memberships.find_by(user: @user)&.role %>)
-      </li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>Keine Schuldengruppen vorhanden.</p>
-<% end %>
+  <h2>Deine Schuldengruppen</h2>
+  <% if @debt_projects.any? %>
+    <ul class="styled-list">
+      <% @debt_projects.each do |project| %>
+        <li>
+          <%= link_to debt_project_path(project), class: "list-link-block" do %>
+            <span><%= project.name %></span>
+            <span class="member-tag role">
+              Rolle: <%= project.group_memberships.find_by(user: @user)&.role %>
+            </span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="empty-state">Keine Schuldengruppen vorhanden.</p>
+  <% end %>
 
-<hr>
+  <hr>
 
-<h2>Von dir erstellte Gruppen</h2>
-<% if @created_projects.any? %>
-  <ul>
-    <% @created_projects.each do |project| %>
-      <li><%= link_to project.name, debt_project_path(project) %></li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>Du hast noch keine Gruppe erstellt.</p>
-<% end %>
+  <h2>Von dir erstellte Gruppen</h2>
+  <% if @created_projects.any? %>
+    <ul class="styled-list">
+      <% @created_projects.each do |project| %>
+        <li>
+          <%= link_to debt_project_path(project), class: "list-link-block" do %>
+            <span><%= project.name %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="empty-state">Du hast noch keine Gruppe erstellt.</p>
+  <% end %>
 
-<hr>
+  <hr>
 
-<h2>Dir zugewiesene Aufgaben</h2>
-<% if @assigned_tasks.any? %>
-  <ul>
-    <% @assigned_tasks.each do |task| %>
-      <li>
-        <%= task.title %> – Status: <%= task.status %> – Gruppe: 
-        <%= link_to task.debt_project.name, debt_project_path(task.debt_project) %>
-      </li>
-    <% end %>
-  </ul>
-<% else %>
-  <p>Keine Aufgaben zugewiesen.</p>
-<% end %>
+  <h2>Dir zugewiesene Aufgaben</h2>
+  <% if @assigned_tasks.any? %>
+    <ul class="styled-list">
+      <% @assigned_tasks.each do |task| %>
+        <li>
+          <%= link_to debt_project_task_path(task.debt_project, task), class: "list-link-block" do %>
+            <span class="task-title"><%= task.title %></span>
+            <span class="member-tag status-<%= task.status %>"><%= task.status.humanize %></span>
+            <span class="group-name"><%= task.debt_project.name %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="empty-state">Keine Aufgaben zugewiesen.</p>
+  <% end %>
 
-<hr>
+  <hr>
 
-<%= link_to "Profil bearbeiten", edit_user_path(@user), class: "bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded" %>
+  <%= link_to "Profil bearbeiten", edit_user_path(@user), class: "btn btn-warning" %>
+</div>

@@ -1,10 +1,7 @@
-class DebtProjectPolicy
+class DebtProjectPolicy < ApplicationPolicy 
   attr_reader :user, :record
 
-  def initialize(user, record)
-    @user = user
-    @record = record
-  end
+
 
   def index?
     user.present?
@@ -34,6 +31,10 @@ class DebtProjectPolicy
 
   def destroy?
     user_is_creator?
+  end
+
+  def show_completed_tasks?
+    user_is_role?(:debt_collector)
   end
 
   private

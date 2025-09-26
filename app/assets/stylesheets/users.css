@@ -1,0 +1,33 @@
+.styled-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.styled-list li {
+  margin-bottom: 0.6rem;
+}
+
+/* Make the link itself the block */
+.list-link-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;        /* remove underline */
+  background: #f9fafb;          /* light gray background */
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: #111827;               /* neutral dark gray */
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+/* Hover + active state */
+.list-link-block:hover {
+  background: #f3f4f6;
+}
+
+.list-link-block:active {
+  transform: scale(0.98);       /* little button press effect */
+}

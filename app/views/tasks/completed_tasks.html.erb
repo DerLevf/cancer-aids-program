@@ -1,0 +1,27 @@
+<div class="main-container">
+  <h1>Abgeschlossene Aufgaben in <%= @debt_project.name %></h1>
+
+  <% if @completed_tasks.any? %>
+    <div class="tasks-list">
+      <% @completed_tasks.each do |task| %>
+        <div class="card task-item status-completed">
+          <p><strong>Titel:</strong> <%= task.title %></p>
+          <p><strong>Beschreibung:</strong> <%= task.description %></p>
+          <p>
+            <strong>Zugewiesen an:</strong> 
+            <span class="member status-tag debtor"><%= task.assigned_user&.username || "Nicht zugewiesen" %></span>
+          </p>
+          <p>
+            <strong>Status:</strong> 
+            <span class="member status-tag status-completed"><%= task.status.humanize %></span>
+          </p>
+          <p><strong>Abgeschlossen am/Aktualisiert:</strong> <%= task.updated_at.strftime("%d.%m.%Y um %H:%M") %></p>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="empty-state">Es sind noch keine Aufgaben in diesem Projekt abgeschlossen.</p>
+  <% end %>
+
+  <%= link_to "Zurück zum Projekt", debt_project_path(@debt_project), class: "back-link" %>
+</div>

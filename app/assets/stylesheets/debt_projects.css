@@ -1,0 +1,141 @@
+/* Container */
+.debt-projects {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Header */
+.debt-projects h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Table */
+.table-container {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  margin-bottom: 1rem;
+}
+
+.debt-projects-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.debt-projects-table thead {
+  background: #f8f9fa;
+  text-align: left;
+}
+
+.debt-projects-table th,
+.debt-projects-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.debt-projects-table tr:hover {
+  background-color: #f1f5f9;
+  cursor: pointer;
+}
+
+/* Members */
+/* Completed status (Can be styled, but will be hidden in HTML) */
+.member.status-tag.status-completed {
+    background: #4b5563; /* Darker grey, although hidden by HTML */
+    color: #fff;
+}
+
+/* In Progress status (should be grey) */
+.member.status-tag.status-in_progress {
+    background: #e5e7eb; /* Light grey */
+    color: #4b5563;
+}
+
+/* Overdue status (should be red) */
+.member.status-tag.status-overdue {
+    background: #ef4444; /* Red danger color */
+    color: #fff;
+}
+
+/* Pending status (reusing a non-destructive color) */
+.member.status-tag.status-pending {
+    background: #fbbf24; /* Warning yellow/amber */
+    color: #111;
+}
+
+/* Make sure your existing member roles are also covered for clarity */
+.member.debt_collector {
+    background: #fde68a; /* Yellow/Amber from your admin example */
+}
+
+.member.debtor {
+    background: #bfdbfe; /* Light blue from your moderator example */
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 0.375rem;
+  padding: 0.4rem 0.75rem;
+  transition: background 0.2s ease, color 0.2s ease;
+  margin-right: 0.4rem; /* small gap between buttons */
+}
+
+.btn:last-child {
+  margin-right: 0; /* remove extra margin on the last button in a group */
+}
+
+/* Optional: if you wrap multiple buttons in a group container */
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem; /* modern way to space buttons evenly */
+}
+
+.btn + .btn {
+  margin-left: 0.4rem;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #1e40af;
+}
+
+.btn-warning {
+  background: #fbbf24;
+  color: #111;
+}
+
+.btn-warning:hover {
+  background: #d97706;
+  color: #fff;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+}
+
+/* Empty state */
+.debt-projects p {
+  background: #f3f4f6;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  color: #4b5563;
+}

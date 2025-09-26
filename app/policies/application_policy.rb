@@ -36,6 +36,22 @@ class ApplicationPolicy
     false
   end
 
+    private
+
+  # HILFSMETHODE: Prüft, ob der aktuelle Benutzer die angegebene Rolle im Projekt hat.
+  # Dies ist notwendig, da die Rolle an die GroupMembership gebunden ist, nicht an den User.
+  def user_is_role?(role_name)
+    # Stellt sicher, dass der Benutzer existiert, das Projekt existiert (record) und dann
+    # prüft die group_memberships des Projekts nach dem Benutzer mit der Rolle.
+    user.present? && record.group_memberships.exists?(user: user, role: role_name)
+  end
+
+  protected
+
+    def user_is_role?(role_name)
+    user.present? && record.group_memberships.exists?(user: user, role: role_name)
+  end
+
   class Scope
     def initialize(user, scope)
       @user = user

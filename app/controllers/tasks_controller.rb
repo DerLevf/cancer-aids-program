@@ -1,8 +1,7 @@
 class TasksController < ApplicationController
   before_action :authenticate_user!
   before_action :set_debt_project
-  before_action :set_task, only: [ :show, :edit, :update, :destroy ] # Added :show
-
+before_action :set_task, only: [ :show, :edit, :update, :destroy ]
   after_action :log_task_creation, only: [:create]
   after_action :log_task_update, only: [:update]
   after_action :log_task_deletion, only: [:destroy]
@@ -41,6 +40,11 @@ class TasksController < ApplicationController
     end
   end
 
+def completed_tasks
+  authorize @debt_project, :show_completed_tasks? 
+  @completed_tasks = @debt_project.tasks.where(status: 1).order(updated_at: :desc)
+end
+
   def destroy
     authorize @task
     @task.destroy
@@ -50,7 +54,9 @@ class TasksController < ApplicationController
   private
 
   def set_debt_project
-    @debt_project = DebtProject.find(params[:debt_project_id])
+    # This must handle both :id (from member route) and :debt_project_id
+    project_id = params[:debt_project_id] || params[:id]
+    @debt_project = DebtProject.find(project_id)
   end
 
   def set_task
@@ -66,6 +72,9 @@ def task_params
   params.require(:task).permit(:title, :description, :status, :deadline,
                                 :assigned_to_id)
 end
+
+
+
   def log_task_creation
     ActivityLog.create!(
       user: current_user,

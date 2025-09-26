@@ -75,6 +75,10 @@ select:focus {
   width: 100%; /* gleich breit */
   box-sizing: border-box;
 }
+.btn,
+.list-link-block {
+    margin-top: 0.4rem; 
+}
 
 /* Blau */
 .btn-primary {
