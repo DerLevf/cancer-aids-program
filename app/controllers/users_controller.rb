@@ -19,27 +19,27 @@ def create
       redirect_to debt_projects_path, notice: "Registrierung erfolgreich!"
     else
       error_messages = @user.errors.full_messages
-      
-      flash.now[:alert] = "Registrierung fehlgeschlagen: <br>".html_safe + 
-                          error_messages.join('<br>').html_safe
+
+      flash.now[:alert] = "Registrierung fehlgeschlagen: <br>".html_safe +
+                          error_messages.join("<br>").html_safe
 
       render :new, status: :unprocessable_entity
     end
-  end
+end
 
 
   def show
-    @user = User.find(params[:id]) 
-    
+    @user = User.find(params[:id])
+
     # Ihre vorhandene Logik zum Laden der Projekte
-    @debt_projects = @user.debt_projects 
-    @created_projects = @user.created_debt_projects 
-    
+    @debt_projects = @user.debt_projects
+    @created_projects = @user.created_debt_projects
+
     # FIX: Fügt die where.not Bedingung hinzu, um 'completed' Tasks auszuschließen
-    @assigned_tasks = @user.assigned_tasks.where.not(status: Task.statuses[:completed]) 
-    
+    @assigned_tasks = @user.assigned_tasks.where.not(status: Task.statuses[:completed])
+
     # Optional: Sie können auch direkt mit der ENUM-Bezeichnung filtern (lesbarer)
-    # @assigned_tasks = @user.assigned_tasks.where.not(status: :completed) 
+    # @assigned_tasks = @user.assigned_tasks.where.not(status: :completed)
   end
 
   def edit
