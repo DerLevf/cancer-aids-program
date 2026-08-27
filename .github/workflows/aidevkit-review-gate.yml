@@ -1,0 +1,81 @@
+# AIDevKit Review-Gate — Machbarkeitsprüfung / Prototyp
+#
+# Zweck: Ein Pull Request darf nur gemerged werden, wenn entweder
+#   a) der Review-Check in AIDevKit (Stufe "Nach Entwicklung") "Review notwendig: NEIN" ermittelt
+#      hat — erkennbar am Commit-Status mit Context "aidevkit/review-check" auf dem PR-HEAD-Commit
+#      (AIDevKit schreibt diesen Status direkt über die GitHub-API, siehe writeGithubCommitStatus
+#      in extension.ts), ODER
+#   b) mindestens eine andere Person als der PR-Autor den PR mit "Approve" freigegeben hat.
+#
+# Fehlt der AIDevKit-Status komplett (z.B. weil der Review-Check nie ausgeführt wurde), wird
+# sicherheitshalber ebenfalls ein Approval verlangt (Fail-Safe — im Zweifel lieber ein Review zu
+# viel als eines zu wenig, analog zur Entscheidungslogik im Review-Check selbst).
+#
+# EINRICHTUNG (einmalig pro Repository):
+#   1. Diese Datei nach .github/workflows/aidevkit-review-gate.yml im Zielrepo committen.
+#   2. GitHub -> Settings -> Branches -> Branch protection rule für den Ziel-Branch:
+#      - "Require status checks to pass before merging" aktivieren, den Job
+#        "aidevkit-review-gate" als required eintragen.
+#      - "Dismiss stale pull request approvals when new commits are pushed" aktivieren — sonst
+#        bleibt ein altes Approval nach neuen Commits fälschlich gültig.
+#   3. Kein zusätzliches Secret nötig — der Workflow verwendet ausschliesslich das automatische
+#      GITHUB_TOKEN (nur lesender Zugriff auf Commit-Status und PR-Reviews im selben Repo).
+#
+# GRENZEN DIESES PROTOTYPS (siehe EINSCHAETZUNG.md):
+#   - Setzt einen PR-basierten Workflow voraus (z.B. AL-Go for GitHub) — heute arbeitet das Team
+#     noch mit Aufgabennummern/Commits direkt, ohne Pull Requests.
+#   - Geprüft wurde die REST-API-Logik selbst, nicht der Ablauf gegen ein produktives Repo mit
+#     echter Branch-Protection-Konfiguration (dafür gibt es aktuell kein Ziel-Repo).
+
+name: AIDevKit Review Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  pull-requests: read
+  statuses: read
+
+jobs:
+  aidevkit-review-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: KI-Review-Einschätzung und ggf. Approval prüfen
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          set -euo pipefail
+
+          echo "Lese Commit-Status 'aidevkit/review-check' fuer $HEAD_SHA ..."
+          STATE=$(gh api "repos/$REPO/commits/$HEAD_SHA/status" --jq \
+            '.statuses[] | select(.context == "aidevkit/review-check") | .state' | head -n1)
+
+          if [ "$STATE" = "success" ]; then
+            echo "AIDevKit: Review laut KI NICHT notwendig — Gate besteht ohne Review."
+            exit 0
+          fi
+
+          if [ -z "$STATE" ]; then
+            echo "AIDevKit: Kein Review-Check-Status gefunden — Fail-Safe, es wird ein Review verlangt."
+          else
+            echo "AIDevKit: Review laut KI notwendig (Status: $STATE) — es wird ein Review verlangt."
+          fi
+
+          echo "Pruefe, ob bereits ein Approval einer anderen Person als $PR_AUTHOR vorliegt ..."
+          APPROVED=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" --paginate \
+            --jq '[.[] | select(.state == "APPROVED" and .user.login != env.PR_AUTHOR)] | length')
+
+          if [ "$APPROVED" -gt 0 ]; then
+            echo "Mindestens ein Approval einer anderen Person vorhanden — Gate besteht."
+            exit 0
+          fi
+
+          echo "::error::Kein Review vorhanden, obwohl laut AIDevKit ein Review notwendig ist (oder keine Einschätzung vorliegt). Merge bleibt blockiert, bis ein Review-Approval einer anderen Person vorliegt."
+          exit 1
