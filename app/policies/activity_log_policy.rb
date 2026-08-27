@@ -5,11 +5,11 @@ class ActivityLogPolicy < ApplicationPolicy
     end
   end
   
-  def index?
-    user.present?
-  end
+  # def index?
+  #   user.present?
+  # end
 
-  def show?
-    user.present?
-  end
+  # def show?
+  #   user.present?
+  # end
 end
